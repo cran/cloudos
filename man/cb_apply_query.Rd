@@ -4,61 +4,33 @@
 \alias{cb_apply_query}
 \title{Apply a query to a cohort}
 \usage{
-cb_apply_query(
-  cohort,
-  simple_query,
-  adv_query,
-  column_ids,
-  keep_query = TRUE,
-  keep_columns = TRUE
-)
+cb_apply_query(cohort, query, keep_query = TRUE)
 }
 \arguments{
 \item{cohort}{A cohort object. (Required)
 See constructor function \code{\link{cb_create_cohort}} or \code{\link{cb_load_cohort}}}
 
-\item{simple_query}{A phenotype query using the "simple query" list structure (see example).}
-
-\item{adv_query}{A phenotype query using the "advanced query" nested list structure (see example).
-Advanced queries can include logical operators: 'AND', 'OR', 'NOT'.}
-
-\item{column_ids}{Phenotype IDs to be added as columns in the participant table.}
+\item{query}{A phenotype query defined using the \code{\link{phenotype}} function and logic operators (see example below)}
 
 \item{keep_query}{If True, combines the newly supplied query with the pre-existing query.
 Otherwise, pre-existing query is overwritten. (Default: TRUE)}
-
-\item{keep_columns}{If True, pre-existing columns are retained and newly supplied columns are added.
-Otherwise, pre-exisitng columns are overwritten. (Default: TRUE)}
 }
 \value{
-A confirmation string.
+The updated cohort object.
 }
 \description{
 Updates a cohort by applying a new query.
 }
 \examples{
 \dontrun{
-my_cohort <- cb_load_cohort(cohort_id = "5f9af3793dd2dc6091cd17cd", cb_version = "v1")
-cb_apply_query(my_cohort,
-                simple_query = list("22" = list("from" = "2015-05-13", "to" = "2016-04-29"),
-                                    "50" = c("Father", "Mother")) )
+A <- phenotype(id = 13, from = "2016-01-21", to = "2017-02-13")
+B <- phenotype(id = 4, value = "Cancer")
 
-my_cohort <- cb_load_cohort(cohort_id = "5f9af3793dd2dc6091cd17cd", cb_version = "v2")
-adv_query <- list(
-  "operator" = "AND",
-  "queries" = list(
-    list( "id" = 22, "value" = list("from"="2015-05-13", "to"="2016-04-29")),
-    list(
-      "operator" = "OR",
-      "queries" = list(
-        list("id" = 32, "value" = c("Cancer", "Rare Diseases")),
-        list("id" = 14, "value" = "Yes")
-      )
-    )
-  )
-)
-cb_apply_query(my_cohort, adv_query = adv_query)
+A_not_B <- A & !B
 
+my_cohort <- cb_load_cohort(cohort_id = "612f37a57673ed0ddeaf1333", cb_version = "v2")
+
+my_cohort <- cb_apply_query(my_cohort, query = A_not_B, keep_query = F)
 }
 
 }
